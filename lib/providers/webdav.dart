@@ -37,6 +37,19 @@ class WebDavClientProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<String> getAuthorizationFilePath(String path,
+      [bool http = false]) async {
+    final preferences = await SharedPreferences.getInstance();
+    final host = preferences.get("host");
+    final user = preferences.get("user");
+    final password = preferences.get("password");
+    if (!path.startsWith("/")) {
+      path = "/$path";
+    }
+    return Uri.encodeFull(
+        "${http ? "http" : "https"}://$user:$password@$host$path");
+  }
+
   String? pop() {
     if (paths.length != 1) {
       final last = paths.removeLast();
@@ -53,9 +66,13 @@ class WebDavClientProvider extends ChangeNotifier {
       return _client!;
     }
     final preferences = await SharedPreferences.getInstance();
+    var host = preferences.getString("host");
+    if (host?.startsWith("http") == false) {
+      host = "https://$host";
+    }
 
     _client = webdav.newClient(
-      preferences.getString("host") ?? "",
+      host ?? "",
       user: preferences.getString("user") ?? "",
       password: preferences.getString("password") ?? "",
     );

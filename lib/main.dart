@@ -1,11 +1,14 @@
 import 'package:davplayer/routers.dart';
 import 'package:davplayer/providers/webdav.dart';
-import 'package:dynamic_color/dynamic_color.dart';
+import 'package:dynamic_system_colors/dynamic_system_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
+
   runApp(ChangeNotifierProvider.value(
     value: WebDavClientProvider(),
     child: const MyApp(),

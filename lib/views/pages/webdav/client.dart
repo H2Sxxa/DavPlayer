@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:davplayer/providers/webdav.dart';
+import 'package:davplayer/routers.dart';
 import 'package:davplayer/views/pages/webdav/media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -32,24 +33,18 @@ class WebDavClientPage extends HookWidget {
     return AnimatedSwitcher(
       duration: Durations.medium4,
       child: Scaffold(
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              ListTile(
-                title: const Text("Home"),
-                onTap: () => provider.goHome(),
-              )
-            ],
-          ),
-        ),
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           title: const Text("DavPlayer"),
-          flexibleSpace: ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
-            ),
-          ),
+          actions: [
+            if (provider.canPop())
+              IconButton(
+                  onPressed: () => provider.pop(),
+                  icon: const Icon(Icons.arrow_back)),
+            IconButton(
+                onPressed: () => provider.goHome(),
+                icon: const Icon(Icons.home))
+          ],
         ),
         body: data == null || future.connectionState == ConnectionState.waiting
             ? const Center(
@@ -85,7 +80,10 @@ class WebDavClientPage extends HookWidget {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) {
                                 return MultiMediaWidget(
-                                  data: provider.readFile(entry.path!),
+                                  source: provider
+                                      .getAuthorizationFilePath(entry.path!),
+                                  path: entry.path,
+                                  fetcher: () => provider.readFile(entry.path!),
                                 );
                               },
                             ));

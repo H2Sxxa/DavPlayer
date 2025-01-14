@@ -94,7 +94,7 @@ class LoginDavPage extends HookWidget {
                 preferences.setString("host", host.text);
                 preferences.setString("user", user.text);
                 preferences.setString("password", password.text);
-                router.push("/webdav/client");
+                router.go("/webdav/client");
               },
               child: const Text("Login"),
             ),
