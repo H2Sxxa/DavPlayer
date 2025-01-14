@@ -28,13 +28,55 @@ class MultiMediaWidget extends HookWidget {
       if (path?.endsWith("flac") == true) {
         debugPrint(url);
         player.open(Media(url));
-        return SizedBox(
-          child: FilledButton(
-              onPressed: () {
-                player.playOrPause();
-              },
-              child: const Text("Pause/Playing")),
-        );
+        return Column(children: [
+          StreamBuilder(
+            stream: player.stream.duration,
+            builder: (context, snapshot) {
+              final data = snapshot.data;
+              if (data == null) {
+                return const SizedBox.shrink();
+              }
+
+              return Text(data.toString());
+            },
+          ),
+          StreamBuilder(
+            stream: player.stream.position,
+            builder: (context, snapshot) {
+              final data = snapshot.data;
+              if (data == null) {
+                return const SizedBox.shrink();
+              }
+
+              return Text(data.toString());
+            },
+          ),
+          StreamBuilder(
+            stream: player.stream.subtitle,
+            builder: (context, snapshot) {
+              final data = snapshot.data;
+              if (data == null) {
+                return const SizedBox.shrink();
+              }
+
+              return Text(data.toString());
+            },
+          ),
+          SizedBox(
+            child: FilledButton(
+                onPressed: () {
+                  player.jump(0);
+                },
+                child: const Text("Replay")),
+          ),
+          SizedBox(
+            child: FilledButton(
+                onPressed: () {
+                  player.playOrPause();
+                },
+                child: const Text("Pause/Play")),
+          )
+        ]);
       }
 
       final rev = await fetcher();
@@ -45,6 +87,10 @@ class MultiMediaWidget extends HookWidget {
       } catch (_) {}
       try {
         final text = String.fromCharCodes(Uint16List.sublistView(rev));
+        return SelectableText(text);
+      } catch (_) {}
+      try {
+        final text = String.fromCharCodes(rev);
         return SelectableText(text);
       } catch (_) {}
       return const Text("Unsupport");

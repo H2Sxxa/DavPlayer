@@ -1,8 +1,6 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:davplayer/providers/webdav.dart';
-import 'package:davplayer/routers.dart';
 import 'package:davplayer/views/pages/webdav/media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
